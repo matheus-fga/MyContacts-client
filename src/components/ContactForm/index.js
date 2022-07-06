@@ -17,10 +17,15 @@ export default function ContactForm({ buttonLabel }) {
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [category, setCategory] = useState('');
-  const { setError, removeError, getErrorByFieldName } = useErrors();
+
+  const {
+    setError, removeError, getErrorByFieldName, errors,
+  } = useErrors();
+
+  const isFormValid = (name && errors.length === 0);
 
   const handleNameChange = (event) => {
-    setName(event.target.value.trim());
+    setName(event.target.value.trimStart());
 
     if (!event.target.value.trim()) {
       setError({ field: 'name', message: 'Nome é obrigatório.' });
@@ -54,7 +59,7 @@ export default function ContactForm({ buttonLabel }) {
       >
         <Input
           error={getErrorByFieldName('name')}
-          placeholder="Nome"
+          placeholder="Nome *"
           value={name}
           onChange={handleNameChange}
         />
@@ -94,7 +99,7 @@ export default function ContactForm({ buttonLabel }) {
       </FormGroup>
 
       <ButtonContainer>
-        <Button type="submit">{buttonLabel}</Button>
+        <Button type="submit" disabled={!isFormValid}>{buttonLabel}</Button>
       </ButtonContainer>
     </Form>
   );
