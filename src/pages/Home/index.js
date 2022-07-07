@@ -11,14 +11,19 @@ import trash from '../../assets/images/icons/trash.svg';
 
 export default function Home() {
   const [contacts, setContacts] = useState([]);
+  const [orderBy, setOrderBy] = useState('asc');
 
   useEffect(() => {
-    fetch('http://localhost:3001/contacts')
+    fetch(`http://localhost:3001/contacts?orderBy=${orderBy}`)
       .then(async (response) => {
         const json = await response.json();
         setContacts(json);
       });
-  }, []);
+  }, [orderBy]);
+
+  const handleToggleOrderBy = () => {
+    setOrderBy((prevState) => (prevState === 'asc' ? 'desc' : 'asc'));
+  };
 
   return (
     <Container>
@@ -35,9 +40,9 @@ export default function Home() {
         <Link to="/new">Novo Contato</Link>
       </Header>
 
-      <ListHeader>
+      <ListHeader orderBy={orderBy}>
         <header>
-          <button type="button">
+          <button type="button" onClick={handleToggleOrderBy}>
             <span>Nome</span>
             <img src={arrow} alt="arrow" />
           </button>
