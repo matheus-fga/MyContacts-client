@@ -1,4 +1,6 @@
-import { useEffect, useState, useMemo } from 'react';
+import {
+  useEffect, useState, useMemo, useCallback,
+} from 'react';
 import { Link } from 'react-router-dom';
 
 import {
@@ -27,23 +29,24 @@ export default function Home() {
     contact.name.toLowerCase().includes(searchTerm.toLowerCase())
   )), [contacts, searchTerm]);
 
-  useEffect(() => {
-    async function loadContatcts() {
-      try {
-        setIsLoading(true);
+  const loadContacts = useCallback(async () => {
+    try {
+      setIsLoading(true);
 
-        const contactsList = await ContactsService.listContacts(orderBy);
+      const contactsList = await ContactsService.listContacts(orderBy);
 
-        setContacts(contactsList);
-      } catch {
-        setHasError(true);
-      } finally {
-        setIsLoading(false);
-      }
+      setHasError(false);
+      setContacts(contactsList);
+    } catch {
+      setHasError(true);
+    } finally {
+      setIsLoading(false);
     }
-
-    loadContatcts();
   }, [orderBy]);
+
+  useEffect(() => {
+    loadContacts();
+  }, [loadContacts]);
 
   const handleToggleOrderBy = () => {
     setOrderBy((prevState) => (prevState === 'asc' ? 'desc' : 'asc'));
@@ -51,6 +54,10 @@ export default function Home() {
 
   const handleChangeSearchTerm = (event) => {
     setSearchTerm(event.target.value.trimStart());
+  };
+
+  const handleTryAgain = () => {
+    loadContacts();
   };
 
   return (
@@ -79,47 +86,53 @@ export default function Home() {
       {hasError && (
         <ErrorContainer>
           <img src={sad} alt="sad" />
+
           <div className="details">
             <strong>Ocorreu um erro ao obter os seus contatos!</strong>
-            <Button type="button">Tentar novamente</Button>
+
+            <Button type="button" onClick={handleTryAgain}>Tentar novamente</Button>
           </div>
         </ErrorContainer>
       )}
 
-      {filteredContacts.length > 0 && (
-        <ListHeader orderBy={orderBy}>
-          <header>
-            <button type="button" onClick={handleToggleOrderBy}>
-              <span>Nome</span>
-              <img src={arrow} alt="arrow" />
-            </button>
-          </header>
-        </ListHeader>
+      {!hasError && (
+        <>
+          {filteredContacts.length > 0 && (
+          <ListHeader orderBy={orderBy}>
+            <header>
+              <button type="button" onClick={handleToggleOrderBy}>
+                <span>Nome</span>
+                <img src={arrow} alt="arrow" />
+              </button>
+            </header>
+          </ListHeader>
+          )}
+
+          {filteredContacts.map((contact) => (
+            <Card key={contact.id}>
+              <div className="info">
+                <div className="contact-name">
+                  <strong>{contact.name}</strong>
+                  {contact.category_name && (
+                  <small>{contact.category_name}</small>
+                  )}
+                </div>
+                <span>{contact.email}</span>
+                <span>{contact.phone}</span>
+              </div>
+
+              <div className="actions">
+                <Link to={`/edit/${contact.id}`}>
+                  <img src={edit} alt="edit" />
+                </Link>
+                <button type="button">
+                  <img src={trash} alt="trash" />
+                </button>
+              </div>
+            </Card>
+          ))}
+        </>
       )}
-
-      {filteredContacts.map((contact) => (
-        <Card key={contact.id}>
-          <div className="info">
-            <div className="contact-name">
-              <strong>{contact.name}</strong>
-              {contact.category_name && (
-                <small>{contact.category_name}</small>
-              )}
-            </div>
-            <span>{contact.email}</span>
-            <span>{contact.phone}</span>
-          </div>
-
-          <div className="actions">
-            <Link to={`/edit/${contact.id}`}>
-              <img src={edit} alt="edit" />
-            </Link>
-            <button type="button">
-              <img src={trash} alt="trash" />
-            </button>
-          </div>
-        </Card>
-      ))}
     </Container>
   );
 }
