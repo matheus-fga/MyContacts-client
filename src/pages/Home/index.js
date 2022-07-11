@@ -12,6 +12,7 @@ import trash from '../../assets/images/icons/trash.svg';
 import Loader from '../../components/Loader';
 
 import ContactsService from '../../services/ContactsService';
+import APIError from '../../errors/APIError';
 
 export default function Home() {
   const [contacts, setContacts] = useState([]);
@@ -32,7 +33,10 @@ export default function Home() {
 
         setContacts(contactsList);
       } catch (error) {
-        console.log('error', error);
+        if (error instanceof APIError) {
+          console.log(error);
+          console.log(error.response);
+        }
       } finally {
         setIsLoading(false);
       }
