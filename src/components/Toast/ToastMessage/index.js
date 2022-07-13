@@ -7,7 +7,7 @@ import { Container } from './styles';
 
 export default function ToastMessage({ text, type }) {
   return (
-    <Container>
+    <Container type={type}>
       {type === 'danger' && <img src={xCircle} alt="X" />}
       {type === 'success' && <img src={checkCircle} alt="check" />}
       <strong>{text}</strong>
