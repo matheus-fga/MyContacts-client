@@ -15,7 +15,11 @@ export default function NewContact() {
         category_id: formData.categoryId,
       });
 
-      toast({ type: 'success', text: 'Contato cadastrado com sucesso!' });
+      toast({
+        type: 'success',
+        text: 'Contato cadastrado com sucesso!',
+        duration: 3000,
+      });
     } catch {
       toast({ type: 'danger', text: 'Erro ao cadastrar contato!' });
     }
