@@ -30,6 +30,8 @@ export default function Home() {
   const [searchTerm, setSearchTerm] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [contactBeingDeleted, setContactBeingDeleted] = useState(null);
 
   const filteredContacts = useMemo(() => contacts.filter((contact) => (
     contact.name.toLowerCase().includes(searchTerm.toLowerCase())
@@ -66,16 +68,30 @@ export default function Home() {
     loadContacts();
   };
 
+  const handleDeleteContact = (contact) => {
+    setContactBeingDeleted(contact);
+    setIsModalVisible(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalVisible(false);
+  };
+
+  const handleConfirmContactDeletion = () => {
+    console.log(contactBeingDeleted.id);
+  };
+
   return (
     <Container>
       <Loader isLoading={isLoading} />
 
       <Modal
-        title={'Tem certeza que deseja remover o contato "[Nome]"?'}
+        title={`Tem certeza que deseja remover o contato "${contactBeingDeleted?.name}"?`}
         body="Essa ação não poderá ser desfeita!"
         confirmLabel="Deletar"
-        onCancel={() => alert('Cancelou!')}
-        onConfirm={() => alert('Confirmou!')}
+        onCancel={handleCloseModal}
+        onConfirm={handleConfirmContactDeletion}
+        visible={isModalVisible}
         danger
       />
 
@@ -173,7 +189,7 @@ export default function Home() {
                 <Link to={`/edit/${contact.id}`}>
                   <img src={edit} alt="edit" />
                 </Link>
-                <button type="button">
+                <button type="button" onClick={() => handleDeleteContact(contact)}>
                   <img src={trash} alt="trash" />
                 </button>
               </div>
