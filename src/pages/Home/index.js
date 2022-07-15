@@ -21,6 +21,7 @@ import Loader from '../../components/Loader';
 import Button from '../../components/Button';
 
 import ContactsService from '../../services/ContactsService';
+import formatPhone from '../../utils/formatPhone';
 
 export default function Home() {
   const [contacts, setContacts] = useState([]);
@@ -155,7 +156,7 @@ export default function Home() {
                   )}
                 </div>
                 <span>{contact.email}</span>
-                <span>{contact.phone}</span>
+                <span>{formatPhone(contact.phone)}</span>
               </div>
 
               <div className="actions">
