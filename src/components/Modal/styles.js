@@ -3,7 +3,7 @@ import styled from 'styled-components';
 export const Overlay = styled.div`
   background: rgba(0, 0, 0, 0.6);
   backdrop-filter: blur(3px);
-  position: absolute;
+  position: fixed;
   width: 100%;
   height: 100%;
   left: 0;
@@ -40,7 +40,7 @@ export const Footer = styled.footer`
     background: transparent;
     border: none;
     font-size: 16px;
-    padding-right: 8px;
+    margin-right: 16px;
     color: ${({ theme }) => theme.colors.grey[200]};
   }
 `;
